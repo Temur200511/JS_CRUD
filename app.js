@@ -135,15 +135,25 @@ const tbody = document.querySelector('.table tbody');
 const addForm = document.getElementById('add-form');
 const studentModal = document.getElementById('studentModal');
 const modalBtn = document.getElementById("modal-btn");
+const addStudentBtn = document.querySelector(".btn.btn-primary[data-bs-toggle='modal']");
 const modalTitle = document.querySelector(".modal-title");
 let selectedIndex = null;
 
 renderStudents();
 
+addStudentBtn.addEventListener("click", () => {
+    // "Add Student" tugmasi bosilganda
+    selectedIndex = null; // Yangi qo'shish rejimiga o'tish
+    modalBtn.innerHTML = "Save changes"; // Tugmani matnini yangilash
+    modalTitle.innerHTML = "Studentni qo'shish"; // Modal sarlavhasini o'zgartirish
+    addForm.reset(); // Formani tozalash
+});
+
 addForm.addEventListener("submit", (e) => {
     e.preventDefault();
 
-    if (selectedIndex == null) {
+    if (selectedIndex === null) {
+        // Yangi student qo'shish
         students.push({
             firstName: addForm.firstName.value,
             lastName: addForm.lastName.value,
@@ -151,6 +161,7 @@ addForm.addEventListener("submit", (e) => {
             hasWork: addForm.hasWork.checked,
         });
     } else {
+        // Mavjud studentni o'zgartirish
         students[selectedIndex].firstName = addForm.firstName.value;
         students[selectedIndex].lastName = addForm.lastName.value;
         students[selectedIndex].class = addForm.studentClass.value;
@@ -164,22 +175,22 @@ addForm.addEventListener("submit", (e) => {
         className: "danger",
         style: {
             background: "linear-gradient(to right, #00b09b, #96c93d)",
-        }
+        },
     }).showToast();
 
-    addForm.reset();
-    bootstrap.Modal.getInstance(studentModal).hide();
-    renderStudents();
-    savetoStorage();
+    addForm.reset(); // Formani tozalash
+    bootstrap.Modal.getInstance(studentModal).hide(); // Modalni yopish
+    renderStudents(); // Studentlar ro'yxatini yangilash
+    savetoStorage(); // Ma'lumotlarni saqlash
 });
 
 function renderStudents() {
-    tbody.innerHTML = "";
+    tbody.innerHTML = ""; // Jadvalni tozalash
 
-    students.map((student, i) => {
+    students.forEach((student, i) => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td>${i + 1}</td>
+            <td>${i + 1}</td> <!-- Tartib raqami -->
             <td>${student.firstName}</td>
             <td>${student.lastName}</td>
             <td>${student.class}</td>
@@ -189,9 +200,14 @@ function renderStudents() {
                 <button class="btn" onclick="deleteStudent(${i})"><i class="fa-solid fa-trash"></i></button>
             </td>
         `;
-        tbody.prepend(tr);
+        tbody.appendChild(tr); // Jadvalga oxiriga qo'shish
     });
 }
+
+
+
+
+
 
 function deleteStudent(index) {
     const isConfirm = confirm("Tasdiqlaysizmi?");
@@ -203,10 +219,9 @@ function deleteStudent(index) {
 }
 
 function editStudent(index) {
-    selectedIndex = index;
-    modalBtn.innerHTML = "O'zgartirish";
-    modalTitle.innerHTML = "Studentni o'zgartirish";
-
+    selectedIndex = index; // O'zgartirish rejimiga o'tish
+    modalBtn.innerHTML = "O'zgartirish"; // Tugmani matnini o'zgartirish
+    modalTitle.innerHTML = "Studentni o'zgartirish"; // Modal sarlavhasini o'zgartirish
     addForm.firstName.value = students[index].firstName;
     addForm.lastName.value = students[index].lastName;
     addForm.studentClass.value = students[index].class;
