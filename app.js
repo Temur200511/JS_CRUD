@@ -2,7 +2,10 @@ const tbody = document.querySelector('.table tbody')
 const addForm = document.getElementById('add-form')
 const studentModal = document.getElementById('studentModal')
 const modalBtn = document.getElementById("modal-btn")
+const addBtn = document.getElementById("add-btn")
 const modalTitle = document.querySelector(".modal-title")
+let group = "all"
+let selectedIndex = null
 
 const students = getFromStorage()
 renderStudents()
@@ -12,13 +15,23 @@ addForm.addEventListener("submit", (e)=>{
     
     e.preventDefault()
     
-    students.push({
-       firstName: addForm.firstName.value,
-       lastName: addForm.lastName.value,
-       class: addForm.studentClass.value,
-       hasWork: addForm.hasWork.checked
+    if(selectedIndex==null){
+        students.push({
+            firstName: addForm.firstName.value,
+            lastName: addForm.lastName.value,
+            class: addForm.studentClass.value,
+            hasWork: addForm.hasWork.checked
+     
+         })
+         
+    }else{
+        students[selectedIndex].firstName=addForm.firstName.value
+        students[selectedIndex].lastName=addForm.lastName.value
+        students[selectedIndex].class=addForm.studentClass.value
+        students[selectedIndex].hasWork=addForm.firstName.checked
+    }
 
-    })
+   
 
     Toastify({
         text: "Success",
@@ -38,7 +51,10 @@ addForm.addEventListener("submit", (e)=>{
 savetoStorage()
 })
 
-
+addBtn.addEventListener('click', () => {
+  addBtn.innerHTML=" Student qo'shish"
+    modalTitle.innerHTML="o'quchi qushish"
+})
 
 
 
@@ -80,8 +96,13 @@ if(isConfirm){
 
 
 function editStudent(index){
+    selectedIndex=index
     modalBtn.innerHTML="o'zgartirish"
     modalTitle.innerHTML="student uzgartirish"
+addForm.firstName.value=students[index].firstName
+addForm.lastNameName.value=students[index].lastName
+addForm.studentClass.value=students[index].class
+addForm.hasWork.checked=students[index].hasWork
 }
 
 
